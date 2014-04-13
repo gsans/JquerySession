@@ -1,0 +1,70 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+
+@using (Html.BeginForm())
+{
+    <input type="checkbox" id="filter" value="option1" name="filter" />
+    <input type="checkbox" id="filter" value="option2" name="filter" />
+    <input type="checkbox" id="filter" value="option3" name="filter" />
+    <input type="checkbox" id="filter" value="option4" name="filter" />
+    <button id="button">Go</button>
+}
+
+
+@section scripts
+{
+<script src="~/Scripts/jquery.cookie.js" type="text/javascript"></script>
+
+<script>
+    //read filter
+    function ReadCheckboxes() {
+        var filter = [];
+        $(':checked').each(function () {
+            filter.push($(this).val());
+        });
+        //var output = filter.join();
+        //alert(output);
+        return filter;
+    }
+
+    $('#button').on('click', function () {
+        var filterArray = ReadCheckboxes();
+        StoreFilter(filterArray); 
+    });
+
+    //store filter in cookie
+    function StoreFilter(filterArray) {
+        var filterCookie = filterArray.join();
+        $.cookie('FilterCookie', filterCookie, { path:"/Test", expires:1 });
+    }
+
+    //read filter from cookie
+    function ReadFilter() {
+        var filterCookie = $.cookie('FilterCookie');
+        if (typeof filterCookie == 'undefined' || filterCookie.length == 0)
+            return [];
+        return filterCookie.split(",");
+    }
+
+    function Init() {
+        //read cookie and setup checkboxes
+        var filterArray = ReadFilter();
+        if (filterArray.length <= 0) return;
+        for (var i = 0; i < filterArray.length; ++i) {
+            var item = filterArray[i];
+            if (item)
+                $("input:checkbox[value='" + item + "']").attr("checked", "true");            
+        }
+    }
+
+    //$(document).ready(function (){
+    Init();
+    //});
+
+</script>
+}
